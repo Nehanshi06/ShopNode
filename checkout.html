@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout — Nexus Store</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/checkout.css" />
+</head>
+<body>
+
+  <header class="navbar" role="banner">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo" aria-label="Nexus Store home"><span class="logo-icon">◈</span>NEXUS</a>
+      <div class="nav-actions">
+        <a href="cart.html" class="nav-icon-btn cart-btn" aria-label="Back to cart">← Cart</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="checkout-main">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="index.html">Home</a> <span>›</span>
+      <a href="cart.html">Cart</a> <span>›</span>
+      <span>Checkout</span>
+    </nav>
+
+    <!-- ===== STEP INDICATORS ===== -->
+    <div class="step-indicators" role="list" aria-label="Checkout steps">
+      <div class="step-indicator active" role="listitem" data-step="1">
+        <div class="step-circle">1</div>
+        <span class="step-label">Shipping</span>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-indicator" role="listitem" data-step="2">
+        <div class="step-circle">2</div>
+        <span class="step-label">Delivery</span>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-indicator" role="listitem" data-step="3">
+        <div class="step-circle">3</div>
+        <span class="step-label">Payment</span>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-indicator" role="listitem" data-step="4">
+        <div class="step-circle">4</div>
+        <span class="step-label">Review</span>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-indicator" role="listitem" data-step="5">
+        <div class="step-circle">✓</div>
+        <span class="step-label">Done!</span>
+      </div>
+    </div>
+
+    <div id="checkout-steps" class="checkout-layout">
+
+      <!-- ===== LEFT: STEP FORMS ===== -->
+      <div class="checkout-forms">
+
+        <!-- STEP 1: Shipping Details -->
+        <section id="step-1" class="checkout-step active" aria-label="Shipping details">
+          <h2 class="step-title">📦 Shipping Details</h2>
+          <div class="form-grid">
+            <div class="form-group form-full">
+              <label for="ship-name">Full Name *</label>
+              <input type="text" id="ship-name" placeholder="Your Full Name" autocomplete="name" aria-required="true" />
+              <span id="ship-name-err" class="field-error" aria-live="polite"></span>
+            </div>
+            <div class="form-group">
+              <label for="ship-email">Email Address *</label>
+              <input type="email" id="ship-email" placeholder="you@example.com" autocomplete="email" aria-required="true" />
+              <span id="ship-email-err" class="field-error" aria-live="polite"></span>
+            </div>
+            <div class="form-group">
+              <label for="ship-phone">Mobile Number *</label>
+              <input type="tel" id="ship-phone" placeholder="10-digit mobile" autocomplete="tel" maxlength="10" aria-required="true" />
+              <span id="ship-phone-err" class="field-error" aria-live="polite"></span>
+            </div>
+            <div class="form-group form-full">
+              <label for="ship-address">Address *</label>
+              <textarea id="ship-address" placeholder="House/Flat no., Street, Area…" rows="3" autocomplete="street-address" aria-required="true"></textarea>
+              <span id="ship-address-err" class="field-error" aria-live="polite"></span>
+            </div>
+            <div class="form-group">
+              <label for="ship-city">City *</label>
+              <input type="text" id="ship-city" placeholder="City" autocomplete="address-level2" aria-required="true" />
+              <span id="ship-city-err" class="field-error" aria-live="polite"></span>
+            </div>
+            <div class="form-group">
+              <label for="ship-state">State *</label>
+              <select id="ship-state" aria-required="true">
+                <option value="">Select State</option>
+                <option>Andhra Pradesh</option><option>Assam</option><option>Bihar</option>
+                <option>Delhi</option><option>Goa</option><option>Gujarat</option>
+                <option>Haryana</option><option>Himachal Pradesh</option><option>Jharkhand</option>
+                <option>Karnataka</option><option>Kerala</option><option>Madhya Pradesh</option>
+                <option>Maharashtra</option><option>Odisha</option><option>Punjab</option>
+                <option>Rajasthan</option><option>Tamil Nadu</option><option>Telangana</option>
+                <option>Uttar Pradesh</option><option>Uttarakhand</option><option>West Bengal</option>
+              </select>
+              <span id="ship-state-err" class="field-error" aria-live="polite"></span>
+            </div>
+            <div class="form-group">
+              <label for="ship-pin">PIN Code *</label>
+              <input type="text" id="ship-pin" placeholder="6-digit PIN" maxlength="6" aria-required="true" />
+              <span id="ship-pin-err" class="field-error" aria-live="polite"></span>
+            </div>
+          </div>
+          <div class="step-nav">
+            <span></span>
+            <button class="btn-next" onclick="nextStep()">Continue to Delivery →</button>
+          </div>
+        </section>
+
+        <!-- STEP 2: Delivery Options -->
+        <section id="step-2" class="checkout-step" aria-label="Delivery options">
+          <h2 class="step-title">🚚 Delivery Options</h2>
+          <div class="delivery-options">
+            <div class="delivery-option selected" data-type="standard" onclick="selectDelivery('standard')" role="radio" aria-checked="true" tabindex="0">
+              <div class="delivery-icon">📦</div>
+              <div class="delivery-info">
+                <h3>Standard Delivery</h3>
+                <p>3–5 business days</p>
+              </div>
+              <div class="delivery-price">
+                <span class="free-tag">FREE</span>
+                <small>above ₹999</small>
+              </div>
+            </div>
+            <div class="delivery-option" data-type="express" onclick="selectDelivery('express')" role="radio" aria-checked="false" tabindex="0">
+              <div class="delivery-icon">⚡</div>
+              <div class="delivery-info">
+                <h3>Express Delivery</h3>
+                <p>1–2 business days</p>
+              </div>
+              <div class="delivery-price">₹149</div>
+            </div>
+          </div>
+          <div class="step-nav">
+            <button class="btn-back" onclick="prevStep()">← Back</button>
+            <button class="btn-next" onclick="nextStep()">Continue to Payment →</button>
+          </div>
+        </section>
+
+        <!-- STEP 3: Payment -->
+        <section id="step-3" class="checkout-step" aria-label="Payment method">
+          <h2 class="step-title">💳 Payment Method</h2>
+          <div class="payment-options">
+            <div class="payment-option selected" data-method="cod" onclick="selectPayment('cod')" role="radio" aria-checked="true" tabindex="0">
+              <span class="pay-icon">💵</span> Cash on Delivery
+            </div>
+            <div class="payment-option" data-method="upi" onclick="selectPayment('upi')" role="radio" aria-checked="false" tabindex="0">
+              <span class="pay-icon">📱</span> UPI
+            </div>
+            <div class="payment-option" data-method="card" onclick="selectPayment('card')" role="radio" aria-checked="false" tabindex="0">
+              <span class="pay-icon">💳</span> Credit Card
+            </div>
+            <div class="payment-option" data-method="debit" onclick="selectPayment('debit')" role="radio" aria-checked="false" tabindex="0">
+              <span class="pay-icon">🏧</span> Debit Card
+            </div>
+          </div>
+
+          <!-- UPI Details -->
+          <div id="pay-details-upi" class="payment-details">
+            <label for="upi-id">UPI ID</label>
+            <input type="text" id="upi-id" placeholder="yourname@upi" />
+          </div>
+
+          <!-- Credit Card Details -->
+          <div id="pay-details-card" class="payment-details">
+            <label for="card-number">Card Number</label>
+            <input type="text" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19" />
+            <label for="card-name">Name on Card</label>
+            <input type="text" id="card-name" placeholder="Full Name" />
+            <div class="card-row">
+              <div>
+                <label for="card-expiry">Expiry</label>
+                <input type="text" id="card-expiry" placeholder="MM/YY" maxlength="5" />
+              </div>
+              <div>
+                <label for="card-cvv">CVV</label>
+                <input type="text" id="card-cvv" placeholder="•••" maxlength="3" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Debit Card (same structure) -->
+          <div id="pay-details-debit" class="payment-details">
+            <label for="dcard-number">Card Number</label>
+            <input type="text" id="dcard-number" placeholder="1234 5678 9012 3456" maxlength="19" />
+            <label for="dcard-name">Name on Card</label>
+            <input type="text" id="dcard-name" placeholder="Full Name" />
+            <div class="card-row">
+              <div>
+                <label for="dcard-expiry">Expiry</label>
+                <input type="text" id="dcard-expiry" placeholder="MM/YY" maxlength="5" />
+              </div>
+              <div>
+                <label for="dcard-cvv">CVV</label>
+                <input type="text" id="dcard-cvv" placeholder="•••" maxlength="3" />
+              </div>
+            </div>
+          </div>
+
+          <div class="step-nav">
+            <button class="btn-back" onclick="prevStep()">← Back</button>
+            <button class="btn-next" onclick="nextStep()">Review Order →</button>
+          </div>
+        </section>
+
+        <!-- STEP 4: Order Review -->
+        <section id="step-4" class="checkout-step" aria-label="Order review">
+          <h2 class="step-title">📋 Review Your Order</h2>
+
+          <div class="review-section">
+            <h3>Items</h3>
+            <div id="review-items" class="review-items"></div>
+          </div>
+
+          <div class="review-grid">
+            <div class="review-section">
+              <h3>Delivery Address</h3>
+              <p id="review-address" class="review-text"></p>
+            </div>
+            <div class="review-section">
+              <h3>Delivery Method</h3>
+              <p id="review-delivery" class="review-text"></p>
+            </div>
+            <div class="review-section">
+              <h3>Payment</h3>
+              <p id="review-payment" class="review-text"></p>
+            </div>
+          </div>
+
+          <div class="review-totals">
+            <div class="summary-row"><span>Subtotal</span><span id="review-subtotal"></span></div>
+            <div class="summary-row green"><span>Savings</span><span id="review-discount"></span></div>
+            <div class="summary-row"><span>Shipping</span><span id="review-shipping"></span></div>
+            <div class="summary-row"><span>GST (18%)</span><span id="review-tax"></span></div>
+            <div class="summary-divider"></div>
+            <div class="summary-row total-row"><span>Grand Total</span><span id="review-total"></span></div>
+          </div>
+
+          <div class="step-nav">
+            <button class="btn-back" onclick="prevStep()">← Back</button>
+            <button id="place-order-btn" class="btn-place-order" onclick="placeOrder()">🛒 Place Order</button>
+          </div>
+        </section>
+
+        <!-- STEP 5: Confirmation -->
+        <section id="step-5" class="checkout-step" aria-label="Order confirmation">
+          <canvas id="confetti-canvas" style="position:fixed;top:0;left:0;pointer-events:none;z-index:9999;display:none"></canvas>
+          <div class="confirmation-content">
+            <div class="confirm-icon" aria-hidden="true">✅</div>
+            <h2>Order Placed Successfully!</h2>
+            <p class="confirm-subtitle">Thank you for shopping with Nexus Store</p>
+            <div class="confirm-details">
+              <div class="confirm-row">
+                <span>Order ID</span>
+                <strong id="confirm-order-id">NX12345678</strong>
+              </div>
+              <div class="confirm-row">
+                <span>Estimated Delivery</span>
+                <strong id="confirm-delivery-date">–</strong>
+              </div>
+              <div class="confirm-row">
+                <span>Confirmation sent to</span>
+                <strong id="confirm-email">–</strong>
+              </div>
+            </div>
+            <div class="confirm-actions">
+              <a href="products.html" class="btn-next">Continue Shopping →</a>
+              <a href="index.html" class="btn-back">Back to Home</a>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- ===== RIGHT: ORDER SUMMARY ===== -->
+      <aside class="checkout-summary" aria-label="Order summary">
+        <h3>Your Order</h3>
+        <div id="checkout-cart-items" class="checkout-cart-items"></div>
+        <div class="checkout-totals">
+          <div class="summary-row"><span>Subtotal</span><span id="co-subtotal"></span></div>
+          <div class="summary-row"><span>GST</span><span id="co-tax"></span></div>
+          <div class="summary-row"><span>Shipping</span><span id="co-shipping"></span></div>
+          <div class="summary-divider"></div>
+          <div class="summary-row total-row"><span>Total</span><span id="co-total"></span></div>
+        </div>
+        <div class="secure-badge">🔒 Secure Checkout</div>
+      </aside>
+
+    </div>
+  </main>
+
+  <div id="toast-container" role="status" aria-live="polite"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/checkout.js"></script>
+  <script>
+    // Keyboard support for delivery/payment options
+    document.querySelectorAll('.delivery-option, .payment-option').forEach(el => {
+      el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Products — ShopNode</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/products.css" />
+</head>
+<body>
+
+  <!-- ===== NAVBAR ===== -->
+  <header class="navbar" role="banner">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo" aria-label="ShopNode home"><span class="logo-icon">◈</span>ShopNode</a>
+      <nav class="nav-links" role="navigation" aria-label="Main navigation">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="products.html" class="nav-link active">Products</a>
+        <a href="products.html?category=Electronics" class="nav-link">Electronics</a>
+        <a href="products.html?category=Fashion" class="nav-link">Fashion</a>
+        <a href="products.html?category=HomeAppliances" class="nav-link">Home Appliances</a>
+      </nav>
+      <div class="nav-actions">
+        <a href="cart.html" class="nav-icon-btn cart-btn" aria-label="Shopping cart">🛒<span class="cart-badge">0</span></a>
+        <button class="nav-hamburger" onclick="toggleMobileNav()" aria-label="Toggle menu">☰</button>
+      </div>
+    </div>
+    <div class="mobile-nav" id="mobile-nav" aria-hidden="true">
+      <a href="index.html">Home</a>
+      <a href="products.html">All Products</a>
+      <a href="products.html?category=Electronics">Electronics</a>
+      <a href="products.html?category=Fashion">Fashion</a>
+      <a href="products.html?category=HomeAppliances">Home Appliances</a>
+      <a href="products.html?category=Books">Books</a>
+      <a href="products.html?category=Sports">Sports</a>
+      <a href="cart.html">Cart</a>
+    </div>
+  </header>
+
+  <main class="products-main">
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="index.html">Home</a> <span>›</span> <span>Products</span>
+    </nav>
+
+    <!-- ===== TOP BAR: Search + Sort ===== -->
+    <div class="products-topbar">
+      <div class="topbar-left">
+        <button class="filter-toggle-btn" onclick="toggleFilterSidebar()" aria-label="Toggle filters">⚙ Filters</button>
+        <span id="result-count" class="result-count" aria-live="polite">28 products found</span>
+      </div>
+      <div class="topbar-right">
+        <div class="search-wrapper search-products">
+          <input type="text" id="search-input" class="search-input" placeholder="Search products, brands…" aria-label="Search products" autocomplete="off" />
+          <button class="search-icon-btn" aria-label="Search">⌕</button>
+          <div id="search-suggestions" class="search-suggestions" role="listbox" aria-label="Search suggestions"></div>
+        </div>
+        <div class="sort-wrapper">
+          <label for="sort-select" class="sort-label">Sort by:</label>
+          <select id="sort-select" class="sort-select" aria-label="Sort products">
+            <option value="popularity">Popularity</option>
+            <option value="price-asc">Price: Low → High</option>
+            <option value="price-desc">Price: High → Low</option>
+            <option value="rating">Rating</option>
+            <option value="newest">Newest</option>
+            <option value="az">A → Z</option>
+            <option value="za">Z → A</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Filter Tags -->
+    <div id="active-filters" class="active-filters" aria-label="Active filters" role="group"></div>
+
+    <div class="products-layout">
+
+      <!-- ===== FILTER SIDEBAR ===== -->
+      <aside id="filter-sidebar" class="filter-sidebar" aria-label="Filters">
+        <div class="sidebar-header">
+          <h2>Filters</h2>
+          <button class="close-sidebar" onclick="toggleFilterSidebar()" aria-label="Close filters">×</button>
+        </div>
+
+        <!-- Category -->
+        <div class="filter-section">
+          <h3 class="filter-title">Category</h3>
+          <div id="filter-categories" class="filter-options"></div>
+        </div>
+
+        <!-- Price -->
+        <div class="filter-section">
+          <h3 class="filter-title">Price Range</h3>
+          <p id="price-label" class="price-label">Up to ₹2,34,900</p>
+          <input type="range" id="price-max-slider" class="price-slider" min="0" max="234900" value="234900" aria-label="Maximum price" />
+        </div>
+
+        <!-- Rating -->
+        <div class="filter-section">
+          <h3 class="filter-title">Minimum Rating</h3>
+          <div id="filter-rating" class="filter-options"></div>
+        </div>
+
+        <!-- Brand -->
+        <div class="filter-section">
+          <h3 class="filter-title">Brand</h3>
+          <div id="filter-brands" class="filter-options filter-brands-list"></div>
+        </div>
+
+        <!-- Availability -->
+        <div class="filter-section">
+          <h3 class="filter-title">Availability</h3>
+          <label class="filter-option">
+            <input type="checkbox" id="in-stock-toggle" onchange="toggleInStock()" />
+            <span class="filter-label">In Stock Only</span>
+          </label>
+        </div>
+
+        <button class="clear-filters-btn" onclick="clearAllFilters()">Clear All Filters</button>
+      </aside>
+
+      <!-- ===== PRODUCT GRID ===== -->
+      <div class="products-content">
+        <div id="product-grid" class="product-grid" role="list" aria-label="Products"></div>
+        <div id="pagination" class="pagination" aria-label="Pagination" role="navigation"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== QUICK VIEW MODAL ===== -->
+  <div id="quick-view-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Quick product view" onclick="if(event.target===this)closeQuickView()">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeQuickView()" aria-label="Close modal">×</button>
+      <div class="modal-body">
+        <div class="modal-image">
+          <img id="qv-image" src="" alt="" />
+        </div>
+        <div class="modal-info">
+          <p id="qv-category" class="qv-category"></p>
+          <h2 id="qv-name" class="qv-name"></h2>
+          <p id="qv-brand" class="qv-brand"></p>
+          <div id="qv-rating" class="qv-rating stars-gold"></div>
+          <div class="qv-price-row">
+            <span id="qv-price" class="qv-price"></span>
+            <span id="qv-original" class="qv-original"></span>
+          </div>
+          <p id="qv-desc" class="qv-desc"></p>
+          <p id="qv-stock" class="qv-stock"></p>
+          <button id="qv-add-cart" class="btn-add-cart qv-add-btn" aria-label="Add to cart">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SIDEBAR OVERLAY ===== -->
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleFilterSidebar()" aria-hidden="true"></div>
+
+  <div id="toast-container" role="status" aria-live="polite"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/products.js"></script>
+  <script>
+    function toggleMobileNav() {
+      const nav = document.getElementById("mobile-nav");
+      const open = nav.classList.toggle("open");
+      nav.setAttribute("aria-hidden", String(!open));
+    }
+    // Keyboard: close modal on Escape
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeQuickView();
+    });
+  </script>
+</body>
+</html>

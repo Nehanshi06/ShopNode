@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Cart — Nexus Store</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/cart.css" />
+</head>
+<body>
+
+  <header class="navbar" role="banner">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo" aria-label="Nexus Store home"><span class="logo-icon">◈</span>NEXUS</a>
+      <nav class="nav-links" role="navigation">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="products.html" class="nav-link">Products</a>
+      </nav>
+      <div class="nav-actions">
+        <a href="cart.html" class="nav-icon-btn cart-btn" aria-label="Shopping cart">🛒<span class="cart-badge">0</span></a>
+        <button class="nav-hamburger" onclick="toggleMobileNav()" aria-label="Toggle menu">☰</button>
+      </div>
+    </div>
+    <div class="mobile-nav" id="mobile-nav" aria-hidden="true">
+      <a href="index.html">Home</a>
+      <a href="products.html">All Products</a>
+      <a href="cart.html">Cart</a>
+    </div>
+  </header>
+
+  <main class="cart-main">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="index.html">Home</a> <span>›</span> <a href="products.html">Products</a> <span>›</span> <span>Cart</span>
+    </nav>
+
+    <h1 class="page-title">Shopping Cart</h1>
+
+    <!-- Empty state -->
+    <div id="cart-empty" class="empty-state" style="display:none" role="alert">
+      <div class="empty-icon">🛒</div>
+      <h2>Your cart is empty</h2>
+      <p>Looks like you haven't added anything yet. Let's change that!</p>
+      <a href="products.html" class="btn-primary">Start Shopping</a>
+    </div>
+
+    <div class="cart-layout">
+      <!-- Cart Items -->
+      <section class="cart-items-section" aria-label="Cart items">
+        <div id="cart-items" class="cart-items" aria-live="polite"></div>
+        <div class="cart-actions">
+          <a href="products.html" class="btn-secondary">← Continue Shopping</a>
+          <button class="btn-danger" onclick="clearCart()" aria-label="Clear all cart items">Clear Cart</button>
+        </div>
+      </section>
+
+      <!-- Cart Summary -->
+      <aside id="cart-summary-section" class="cart-summary-section" style="display:none" aria-label="Order summary">
+        <div class="cart-summary">
+          <h2>Order Summary</h2>
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <span id="summary-subtotal">₹0</span>
+          </div>
+          <div class="summary-row discount-row">
+            <span>Savings</span>
+            <span id="summary-discount" class="green">-₹0</span>
+          </div>
+          <div class="summary-row">
+            <span>Shipping</span>
+            <span id="summary-shipping">₹49</span>
+          </div>
+          <div class="summary-row">
+            <span>GST (18%)</span>
+            <span id="summary-tax">₹0</span>
+          </div>
+          <div class="summary-divider"></div>
+          <div class="summary-row total-row">
+            <span>Total</span>
+            <span id="summary-total">₹0</span>
+          </div>
+          <a href="checkout.html" class="btn-checkout" aria-label="Proceed to checkout">Proceed to Checkout →</a>
+          <div class="secure-badge">🔒 Secure &amp; Encrypted Checkout</div>
+          <div class="accepted-payments">
+            <span>COD</span><span>UPI</span><span>Cards</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="footer-minimal">
+    <p>© 2024 Nexus Store · <a href="index.html">Home</a> · <a href="products.html">Shop</a></p>
+  </footer>
+
+  <div id="toast-container" role="status" aria-live="polite"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/cart.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", renderCartPage);
+    document.addEventListener("cartUpdated", renderCartPage);
+
+    function clearCart() {
+      if (confirm("Remove all items from your cart?")) {
+        CartManager.clearCart();
+        renderCartPage();
+        showToast("Cart cleared.", "info");
+      }
+    }
+    function toggleMobileNav() {
+      const nav = document.getElementById("mobile-nav");
+      const open = nav.classList.toggle("open");
+      nav.setAttribute("aria-hidden", String(!open));
+    }
+  </script>
+</body>
+</html>

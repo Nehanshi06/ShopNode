@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShopNode| Modern E-Commerce</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ===== NAVBAR ===== -->
+  <header class="navbar" role="banner">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo" aria-label="ShopNode home">
+        <span class="logo-icon">◈</span>ShopNode
+      </a>
+      <nav class="nav-links" role="navigation" aria-label="Main navigation">
+        <a href="index.html" class="nav-link active">Home</a>
+        <a href="products.html" class="nav-link">Products</a>
+        <a href="products.html?category=Electronics" class="nav-link">Electronics</a>
+        <a href="products.html?category=Fashion" class="nav-link">Fashion</a>
+        <a href="products.html?category=HomeAppliances" class="nav-link">Home Appliances</a>
+      </nav>
+      <div class="nav-actions">
+        <div class="search-wrapper nav-search">
+          <input type="text" id="nav-search-input" class="nav-search-input" placeholder="Search products…" aria-label="Search products" />
+          <button class="search-btn" onclick="navSearch()" aria-label="Search">⌕</button>
+        </div>
+        <a href="cart.html" class="nav-icon-btn cart-btn" aria-label="Shopping cart">
+          🛒<span class="cart-badge" aria-live="polite">0</span>
+        </a>
+        <button class="nav-hamburger" onclick="toggleMobileNav()" aria-label="Toggle menu">☰</button>
+      </div>
+    </div>
+    <div class="mobile-nav" id="mobile-nav" aria-hidden="true">
+      <a href="index.html">Home</a>
+      <a href="products.html">All Products</a>
+      <a href="products.html?category=Electronics">Electronics</a>
+      <a href="products.html?category=Fashion">Fashion</a>
+      <a href="products.html?category=HomeAppliances">Home Appliances</a>
+      <a href="products.html?category=Books">Books</a>
+      <a href="products.html?category=Sports">Sports</a>
+      <a href="cart.html">Cart</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- ===== HERO SECTION ===== -->
+    <section class="hero" aria-label="Hero banner">
+      <div class="hero-content">
+        <div class="hero-badge">✦ New Season, New Deals</div>
+        <h1 class="hero-title">Shop <em>Smarter.</em><br />Live Better.</h1>
+        <p class="hero-subtitle">Discover 28+ curated products across Electronics, Fashion, Home Appliances, Books &amp; Sports — all in one place.</p>
+        <div class="hero-ctas">
+          <a href="products.html" class="btn-hero-primary">Shop Now ↗</a>
+          <a href="products.html?category=Electronics" class="btn-hero-secondary">View Electronics</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat"><span class="stat-num">28+</span><span class="stat-label">Products</span></div>
+          <div class="stat"><span class="stat-num">5</span><span class="stat-label">Categories</span></div>
+          <div class="stat"><span class="stat-num">4.7★</span><span class="stat-label">Avg Rating</span></div>
+        </div>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <div class="hero-card hero-card-1">
+          <img src="https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=300&q=80" alt="" />
+        </div>
+        <div class="hero-card hero-card-2">
+          <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&q=80" alt="" />
+        </div>
+        <div class="hero-card hero-card-3">
+          <img src="https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=300&q=80" alt="" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CATEGORIES ===== -->
+    <section class="categories-section" aria-label="Browse by category">
+      <div class="section-header">
+        <h2>Browse Categories</h2>
+        <a href="products.html" class="see-all">See All →</a>
+      </div>
+      <div class="categories-grid">
+        <a href="products.html?category=Electronics" class="cat-card" aria-label="Shop Electronics">
+          <div class="cat-icon">📱</div>
+          <h3>Electronics</h3>
+          <p>Gadgets, Phones & More</p>
+        </a>
+        <a href="products.html?category=Fashion" class="cat-card" aria-label="Shop Fashion">
+          <div class="cat-icon">👗</div>
+          <h3>Fashion</h3>
+          <p>Clothes, Shoes & Accessories</p>
+        </a>
+        <a href="products.html?category=HomeAppliances" class="cat-card" aria-label="Shop Home Appliances">
+          <div class="cat-icon">🏠</div>
+          <h3>Home</h3>
+          <p>Furniture & Appliances</p>
+        </a>
+        <a href="products.html?category=Books" class="cat-card" aria-label="Shop Books">
+          <div class="cat-icon">📚</div>
+          <h3>Books</h3>
+          <p>Bestsellers & Classics</p>
+        </a>
+        <a href="products.html?category=Sports" class="cat-card" aria-label="Shop Sports">
+          <div class="cat-icon">⚽</div>
+          <h3>Sports</h3>
+          <p>Equipment & Fitness</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- ===== FEATURED PRODUCTS ===== -->
+    <section class="featured-section" aria-label="Featured products">
+      <div class="section-header">
+        <h2>Featured Products</h2>
+        <a href="products.html" class="see-all">View All →</a>
+      </div>
+      <div class="featured-grid" id="featured-grid">
+        <!-- Rendered by JS -->
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+      </div>
+    </section>
+
+    <!-- ===== DEALS BANNER ===== -->
+    <section class="deals-banner" aria-label="Deals and offers">
+      <div class="deals-content">
+        <h2>🔥 Hot Deals This Week</h2>
+        <p>Up to 60% off on selected items. Limited stock — don't miss out!</p>
+        <a href="products.html" class="btn-hero-primary" onclick="sessionStorage.setItem('showDeals','true')">Grab Deals</a>
+      </div>
+    </section>
+
+    <!-- ===== NEW ARRIVALS ===== -->
+    <section class="featured-section" aria-label="New arrivals">
+      <div class="section-header">
+        <h2>New Arrivals</h2>
+        <a href="products.html?sort=newest" class="see-all">See All →</a>
+      </div>
+      <div class="featured-grid" id="new-arrivals-grid">
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+      </div>
+    </section>
+
+    <!-- ===== WHY ShopNode ===== -->
+    <section class="why-section" aria-label="Why choose ShopNode">
+      <h2>Why Shop at ShopNode?</h2>
+      <div class="why-grid">
+        <div class="why-card">
+          <div class="why-icon">🚚</div>
+          <h3>Fast Delivery</h3>
+          <p>Standard in 3–5 days. Express in 1–2 days.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-icon">🔒</div>
+          <h3>Secure Payments</h3>
+          <p>UPI, Cards, and Cash on Delivery accepted.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-icon">↩</div>
+          <h3>Easy Returns</h3>
+          <p>Hassle-free 10-day return policy.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-icon">⭐</div>
+          <h3>Genuine Products</h3>
+          <p>100% authentic brands you can trust.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="logo-icon">◈</span><strong>ShopNode</strong>
+        <p>Your one-stop modern shopping destination.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Shop</h4>
+        <a href="products.html">All Products</a>
+        <a href="products.html?category=Electronics">Electronics</a>
+        <a href="products.html?category=Fashion">Fashion</a>
+        <a href="products.html?category=Home Appliances">Home Appliances</a>
+      </div>
+      <div class="footer-links">
+        <h4>Help</h4>
+        <a href="#">Returns</a>
+        <a href="#">Track Order</a>
+        <a href="#">FAQs</a>
+        <a href="#">Contact</a>
+      </div>
+    </div>
+    <p class="footer-copy">© 2026 ShopNode — All Rights Reserved.</p>
+  </footer>
+
+  <div id="toast-container" role="status" aria-live="polite"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/cart.js"></script>
+  <script>
+    // Render featured products on homepage
+    document.addEventListener("DOMContentLoaded", () => {
+      const featured = PRODUCTS.sort((a, b) => b.popularity - a.popularity).slice(0, 4);
+      const newArrivals = PRODUCTS.sort((a, b) => a.daysOld - b.daysOld).slice(0, 4);
+
+      function miniCard(p) {
+        const dp = getDiscountedPrice(p);
+        return `<article class="product-card visible" onclick="window.location.href='products.html?q=${encodeURIComponent(p.name)}'" style="cursor:pointer">
+          ${p.discount > 0 ? `<span class="badge badge-discount">-${p.discount}%</span>` : ""}
+          <div class="card-image-wrap">
+            <img src="${p.image}" alt="${p.name}" loading="lazy" class="card-img" />
+          </div>
+          <div class="card-body">
+            <p class="card-category">${p.category}</p>
+            <h3 class="card-name">${p.name}</h3>
+            <p class="card-brand">${p.brand}</p>
+            <div class="card-rating"><span class="stars">${getStarHTML(p.rating)}</span> <span class="rating-num">${p.rating}</span></div>
+            <div class="card-price-row">
+              <span class="card-price">${APP_CONFIG.currency}${dp.toLocaleString()}</span>
+              ${p.discount > 0 ? `<span class="card-original">${APP_CONFIG.currency}${p.price.toLocaleString()}</span>` : ""}
+            </div>
+          </div>
+          <div class="card-footer">
+            <button class="btn-add-cart" onclick="event.stopPropagation(); CartManager.addItem(${p.id})" aria-label="Add ${p.name} to cart">Add to Cart</button>
+          </div>
+        </article>`;
+      }
+
+      document.getElementById("featured-grid").innerHTML = featured.map(miniCard).join("");
+      document.getElementById("new-arrivals-grid").innerHTML = newArrivals.map(miniCard).join("");
+    });
+
+    function navSearch() {
+      const q = document.getElementById("nav-search-input").value.trim();
+      if (q) window.location.href = `products.html?q=${encodeURIComponent(q)}`;
+    }
+    document.getElementById("nav-search-input").addEventListener("keydown", (e) => { if (e.key === "Enter") navSearch(); });
+
+    function toggleMobileNav() {
+      const nav = document.getElementById("mobile-nav");
+      const open = nav.classList.toggle("open");
+      nav.setAttribute("aria-hidden", String(!open));
+    }
+  </script>
+</body>
+</html>
