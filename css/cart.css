@@ -47,7 +47,7 @@
   animation: fadeInUp 0.35s both;
 }
 .cart-item:hover {
-  border-color: rgba(230,62,62,0.2);
+  border-color: rgba(79,70,229,0.15);
   box-shadow: 0 4px 20px rgba(0,0,0,0.3);
 }
 
@@ -141,7 +141,7 @@
   color: var(--clr-text);
   transition: background var(--transition);
 }
-.qty-btn:hover { background: rgba(230,62,62,0.15); color: var(--clr-accent); }
+.qty-btn:hover { background: rgba(79,70,229,0.12); color: var(--clr-accent); }
 
 .qty-value {
   min-width: 36px;
@@ -167,7 +167,7 @@
   transition: var(--transition);
 }
 .remove-btn:hover {
-  background: rgba(230,62,62,0.15);
+  background: rgba(79,70,229,0.12);
   color: var(--clr-accent);
 }
 
@@ -239,12 +239,12 @@
   font-size: 1rem;
   margin-top: 1.5rem;
   transition: var(--transition);
-  box-shadow: 0 4px 20px rgba(230,62,62,0.35);
+  box-shadow: 0 4px 20px rgba(79,70,229,0.3);
 }
 .btn-checkout:hover {
   background: var(--clr-accent2);
   transform: translateY(-2px);
-  box-shadow: 0 6px 28px rgba(230,62,62,0.45);
+  box-shadow: 0 6px 28px rgba(79,70,229,0.4);
 }
 
 .secure-badge {

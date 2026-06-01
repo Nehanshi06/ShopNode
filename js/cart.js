@@ -3,8 +3,8 @@
 // ============================================================
 
 const CartManager = (() => {
-  const CART_KEY = "nexus_cart";
-  const WISHLIST_KEY = "nexus_wishlist";
+  const CART_KEY = "shopnode_cart";
+  const WISHLIST_KEY = "shopnode_wishlist";
 
   // --- Core CRUD ---
   function getCart() {
@@ -43,11 +43,14 @@ const CartManager = (() => {
     }
     saveCart(cart);
     showToast(`"${product.name}" added to cart!`, "success");
+    // Refresh inline qty controls if on products page
+    refreshCardQtyControl(productId);
   }
 
   function removeItem(productId) {
     const cart = getCart().filter((i) => i.id !== productId);
     saveCart(cart);
+    refreshCardQtyControl(productId);
   }
 
   function updateQuantity(productId, quantity) {
@@ -61,6 +64,7 @@ const CartManager = (() => {
     const product = PRODUCTS.find((p) => p.id === productId);
     item.quantity = Math.min(quantity, product.stock);
     saveCart(cart);
+    refreshCardQtyControl(productId);
   }
 
   function clearCart() {
@@ -71,6 +75,12 @@ const CartManager = (() => {
 
   function getItemCount() {
     return getCart().reduce((sum, i) => sum + i.quantity, 0);
+  }
+
+  function getItemQuantity(productId) {
+    const cart = getCart();
+    const item = cart.find((i) => i.id === productId);
+    return item ? item.quantity : 0;
   }
 
   // --- Calculations ---
@@ -113,7 +123,7 @@ const CartManager = (() => {
     }
     localStorage.setItem(WISHLIST_KEY, JSON.stringify(wishlist));
     document.dispatchEvent(new CustomEvent("wishlistUpdated"));
-    return idx === -1; // true = added
+    return idx === -1;
   }
 
   function isWishlisted(productId) {
@@ -137,6 +147,7 @@ const CartManager = (() => {
     updateQuantity,
     clearCart,
     getItemCount,
+    getItemQuantity,
     calculateTotals,
     getWishlist,
     toggleWishlist,
@@ -144,6 +155,44 @@ const CartManager = (() => {
     updateCartBadge,
   };
 })();
+
+// ============================================================
+// Inline Card Quantity Control (products page)
+// ============================================================
+function refreshCardQtyControl(productId) {
+  const card = document.querySelector(`.product-card[data-id="${productId}"]`);
+  if (!card) return;
+  const footer = card.querySelector(".card-footer");
+  if (!footer) return;
+  const qty = CartManager.getItemQuantity(productId);
+  if (qty > 0) {
+    footer.innerHTML = `
+      <div class="card-qty-control">
+        <button class="card-qty-btn" onclick="cardQtyChange(${productId}, -1)" aria-label="Decrease quantity">−</button>
+        <span class="card-qty-val">${qty}</span>
+        <button class="card-qty-btn" onclick="cardQtyChange(${productId}, 1)" aria-label="Increase quantity">+</button>
+      </div>`;
+  } else {
+    const product = PRODUCTS.find((p) => p.id === productId);
+    const outOfStock = product && product.stock === 0;
+    footer.innerHTML = `
+      <button class="btn-add-cart${outOfStock ? " disabled" : ""}"
+        onclick="${outOfStock ? "" : `cardAddToCart(${productId})`}"
+        ${outOfStock ? "disabled" : ""} aria-label="Add to cart">
+        ${outOfStock ? "Out of Stock" : "Add to Cart"}
+      </button>`;
+  }
+}
+
+function cardAddToCart(id) {
+  CartManager.addItem(id);
+  // refreshCardQtyControl is called inside addItem → saveCart → cartUpdated
+}
+
+function cardQtyChange(id, delta) {
+  const current = CartManager.getItemQuantity(id);
+  CartManager.updateQuantity(id, current + delta);
+}
 
 // ============================================================
 // Toast Notifications (global)

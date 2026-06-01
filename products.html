@@ -18,10 +18,10 @@
       <a href="index.html" class="nav-logo" aria-label="ShopNode home"><span class="logo-icon">◈</span>ShopNode</a>
       <nav class="nav-links" role="navigation" aria-label="Main navigation">
         <a href="index.html" class="nav-link">Home</a>
-        <a href="products.html" class="nav-link active">Products</a>
-        <a href="products.html?category=Electronics" class="nav-link">Electronics</a>
-        <a href="products.html?category=Fashion" class="nav-link">Fashion</a>
-        <a href="products.html?category=HomeAppliances" class="nav-link">Home Appliances</a>
+        <a href="products.html" class="nav-link" data-nav="all">Products</a>
+        <a href="products.html?category=Electronics" class="nav-link" data-nav="Electronics">Electronics</a>
+        <a href="products.html?category=Fashion" class="nav-link" data-nav="Fashion">Fashion</a>
+        <a href="products.html?category=HomeAppliances" class="nav-link" data-nav="HomeAppliances">Home Appliances</a>
       </nav>
       <div class="nav-actions">
         <a href="cart.html" class="nav-icon-btn cart-btn" aria-label="Shopping cart">🛒<span class="cart-badge">0</span></a>
@@ -44,13 +44,15 @@
 
     <!-- Breadcrumb -->
     <nav class="breadcrumb" aria-label="Breadcrumb">
-      <a href="index.html">Home</a> <span>›</span> <span>Products</span>
+      <a href="index.html">Home</a> <span>›</span> <span id="breadcrumb-label">Products</span>
     </nav>
 
-    <!-- ===== TOP BAR: Search + Sort ===== -->
+    <!-- ===== TOP BAR: Filter toggle + Search + Sort ===== -->
     <div class="products-topbar">
       <div class="topbar-left">
-        <button class="filter-toggle-btn" onclick="toggleFilterSidebar()" aria-label="Toggle filters">⚙ Filters</button>
+        <button class="filter-toggle-btn" onclick="toggleFilterSidebar()" aria-label="Toggle filters" aria-expanded="false" id="filter-toggle">
+          <span class="filter-toggle-icon">⚙</span> Filters
+        </button>
         <span id="result-count" class="result-count" aria-live="polite">28 products found</span>
       </div>
       <div class="topbar-right">
@@ -165,15 +167,48 @@
   <script src="js/cart.js"></script>
   <script src="js/products.js"></script>
   <script>
+    // ===== Dynamic Active Nav Link =====
+    (function() {
+      const params = new URLSearchParams(window.location.search);
+      const cat = params.get("category");
+      const links = document.querySelectorAll(".nav-link[data-nav]");
+      links.forEach(link => link.classList.remove("active"));
+      if (!cat) {
+        // Plain products.html — highlight "Products"
+        document.querySelector('.nav-link[data-nav="all"]')?.classList.add("active");
+        document.getElementById("breadcrumb-label").textContent = "Products";
+      } else {
+        const match = document.querySelector(`.nav-link[data-nav="${cat}"]`);
+        if (match) {
+          match.classList.add("active");
+          document.getElementById("breadcrumb-label").textContent = match.textContent.trim();
+        } else {
+          // For Books / Sports not in main nav — no active highlight needed
+          const catMap = { "HomeAppliances": "Home Appliances" };
+          document.getElementById("breadcrumb-label").textContent = catMap[cat] || cat;
+        }
+      }
+    })();
+
     function toggleMobileNav() {
       const nav = document.getElementById("mobile-nav");
       const open = nav.classList.toggle("open");
       nav.setAttribute("aria-hidden", String(!open));
     }
+
     // Keyboard: close modal on Escape
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") closeQuickView();
     });
+
+    // Keep filter toggle button aria-expanded in sync
+    const origToggle = toggleFilterSidebar;
+    window.toggleFilterSidebar = function() {
+      origToggle();
+      const btn = document.getElementById("filter-toggle");
+      const sidebar = document.getElementById("filter-sidebar");
+      if (btn) btn.setAttribute("aria-expanded", sidebar.classList.contains("open").toString());
+    };
   </script>
 </body>
 </html>

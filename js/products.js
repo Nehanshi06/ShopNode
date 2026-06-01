@@ -25,32 +25,64 @@ document.addEventListener("DOMContentLoaded", () => {
   buildFilterSidebar();
   buildSortDropdown();
   setupSearch();
-  applyFiltersAndSort();
-  renderActiveFilterTags();
 
-  // URL params support
+  // URL params support — run AFTER sidebar is built
   const params = new URLSearchParams(window.location.search);
+
+  // Handle category from URL — map display names & URL slugs
   if (params.get("category")) {
-    const cat = params.get("category");
+    const raw = params.get("category");
+    // Map URL slug "HomeAppliances" → actual data category "Home Appliances"
+    const catMap = { "HomeAppliances": "Home Appliances" };
+    const cat = catMap[raw] || raw;
     activeFilters.categories = [cat];
+    // Tick the corresponding checkbox
     const cb = document.querySelector(`.filter-cb[data-category="${cat}"]`);
     if (cb) cb.checked = true;
-    applyFiltersAndSort();
-    renderActiveFilterTags();
+    // Highlight active nav link
+    setActiveNavLink(raw);
   }
+
+  if (params.get("sort")) {
+    currentSort = params.get("sort");
+    const sel = document.getElementById("sort-select");
+    if (sel) sel.value = currentSort;
+  }
+
   if (params.get("q")) {
     searchQuery = params.get("q");
     const searchInput = document.getElementById("search-input");
     if (searchInput) searchInput.value = searchQuery;
-    applyFiltersAndSort();
   }
+
+  applyFiltersAndSort();
+  renderActiveFilterTags();
+
+  // Restore inline qty controls for items already in cart
+  CartManager.getCart().forEach((item) => refreshCardQtyControl(item.id));
+
+  // Listen for cart changes to keep cards in sync
+  document.addEventListener("cartUpdated", () => {
+    CartManager.getCart().forEach((item) => refreshCardQtyControl(item.id));
+  });
 });
+
+// ============================================================
+// Active Nav Link
+// ============================================================
+function setActiveNavLink(categorySlug) {
+  document.querySelectorAll(".nav-link").forEach((link) => {
+    link.classList.remove("active");
+    const href = link.getAttribute("href") || "";
+    if (href.includes(`category=${categorySlug}`)) link.classList.add("active");
+  });
+}
 
 // ============================================================
 // Filter Sidebar Builder
 // ============================================================
 function buildFilterSidebar() {
-  // Categories
+  // Categories — show display name
   const catContainer = document.getElementById("filter-categories");
   if (catContainer) {
     catContainer.innerHTML = CATEGORIES.map(
@@ -86,28 +118,28 @@ function buildFilterSidebar() {
     priceSlider.min = minPrice;
     priceSlider.max = maxPrice;
     priceSlider.value = maxPrice;
-    priceLabel.textContent = `Up to ${APP_CONFIG.currency}${maxPrice.toLocaleString()}`;
+    activeFilters.priceMax = maxPrice;
+    priceLabel.textContent = `Up to ${APP_CONFIG.currency}${maxPrice.toLocaleString("en-IN")}`;
     priceSlider.addEventListener("input", function () {
       activeFilters.priceMax = parseInt(this.value);
-      priceLabel.textContent = `Up to ${APP_CONFIG.currency}${parseInt(this.value).toLocaleString()}`;
+      priceLabel.textContent = `Up to ${APP_CONFIG.currency}${parseInt(this.value).toLocaleString("en-IN")}`;
       debouncedApply();
     });
   }
 
-  // Rating
+  // Rating — correct order: "All ratings" first, then 4★ down to 1★
   const ratingContainer = document.getElementById("filter-rating");
   if (ratingContainer) {
-    ratingContainer.innerHTML = [4, 3, 2].map(
-      (r) => `
-      <label class="filter-option">
-        <input type="radio" name="rating" value="${r}" onchange="onRatingChange(${r})" />
-        <span class="filter-label stars-gold">${"★".repeat(r)}${"☆".repeat(5 - r)} & up</span>
-      </label>`
-    ).join(`
+    ratingContainer.innerHTML = `
       <label class="filter-option">
         <input type="radio" name="rating" value="0" checked onchange="onRatingChange(0)" />
         <span class="filter-label">All ratings</span>
-      </label>`);
+      </label>
+      ${[4, 3, 2, 1].map((r) => `
+      <label class="filter-option">
+        <input type="radio" name="rating" value="${r}" onchange="onRatingChange(${r})" />
+        <span class="filter-label stars-gold">${"★".repeat(r)}${"☆".repeat(5 - r)} &amp; above</span>
+      </label>`).join("")}`;
   }
 }
 
@@ -136,7 +168,7 @@ function onBrandChange(el) {
 }
 
 function onRatingChange(r) {
-  activeFilters.rating = r;
+  activeFilters.rating = Number(r);
   currentPage = 1;
   applyFiltersAndSort();
   renderActiveFilterTags();
@@ -182,18 +214,12 @@ function setupSearch() {
   });
 
   input.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-      suggestBox && (suggestBox.style.display = "none");
-    }
-    if (e.key === "Enter") {
-      suggestBox && (suggestBox.style.display = "none");
-    }
+    if (e.key === "Escape") suggestBox && (suggestBox.style.display = "none");
+    if (e.key === "Enter") suggestBox && (suggestBox.style.display = "none");
   });
 
   document.addEventListener("click", (e) => {
-    if (!e.target.closest(".search-wrapper")) {
-      suggestBox && (suggestBox.style.display = "none");
-    }
+    if (!e.target.closest(".search-wrapper")) suggestBox && (suggestBox.style.display = "none");
   });
 }
 
@@ -210,10 +236,7 @@ function renderSuggestions(query) {
       p.brand.toLowerCase().includes(query.toLowerCase())
   ).slice(0, 6);
 
-  if (matches.length === 0) {
-    suggestBox.style.display = "none";
-    return;
-  }
+  if (matches.length === 0) { suggestBox.style.display = "none"; return; }
 
   suggestBox.innerHTML = matches
     .map((p) => {
@@ -224,7 +247,7 @@ function renderSuggestions(query) {
           <p class="sug-name">${highlight(p.name)}</p>
           <p class="sug-cat">${p.category} · ${p.brand}</p>
         </div>
-        <span class="sug-price">${APP_CONFIG.currency}${getDiscountedPrice(p).toLocaleString()}</span>
+        <span class="sug-price">${APP_CONFIG.currency}${getDiscountedPrice(p).toLocaleString("en-IN")}</span>
       </div>`;
     })
     .join("");
@@ -250,8 +273,11 @@ function applyFiltersAndSort() {
     if (activeFilters.categories.length && !activeFilters.categories.includes(p.category)) return false;
     if (activeFilters.brands.length && !activeFilters.brands.includes(p.brand)) return false;
     const dp = getDiscountedPrice(p);
-    if (dp < activeFilters.priceMin || dp > activeFilters.priceMax) return false;
-    if (p.rating < activeFilters.rating) return false;
+    // Price: inclusive range check
+    if (dp < activeFilters.priceMin) return false;
+    if (activeFilters.priceMax !== Infinity && dp > activeFilters.priceMax) return false;
+    // Rating: show products WITH RATING >= selected minimum
+    if (activeFilters.rating > 0 && p.rating < activeFilters.rating) return false;
     if (activeFilters.inStockOnly && p.stock === 0) return false;
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
@@ -260,8 +286,7 @@ function applyFiltersAndSort() {
         !p.category.toLowerCase().includes(q) &&
         !p.brand.toLowerCase().includes(q) &&
         !p.description.toLowerCase().includes(q)
-      )
-        return false;
+      ) return false;
     }
     return true;
   });
@@ -269,14 +294,14 @@ function applyFiltersAndSort() {
   // Sort
   filteredProducts.sort((a, b) => {
     switch (currentSort) {
-      case "price-asc": return getDiscountedPrice(a) - getDiscountedPrice(b);
-      case "price-desc": return getDiscountedPrice(b) - getDiscountedPrice(a);
-      case "rating": return b.rating - a.rating;
-      case "popularity": return b.popularity - a.popularity;
-      case "newest": return a.daysOld - b.daysOld;
-      case "az": return a.name.localeCompare(b.name);
-      case "za": return b.name.localeCompare(a.name);
-      default: return 0;
+      case "price-asc":   return getDiscountedPrice(a) - getDiscountedPrice(b);
+      case "price-desc":  return getDiscountedPrice(b) - getDiscountedPrice(a);
+      case "rating":      return b.rating - a.rating;
+      case "popularity":  return b.popularity - a.popularity;
+      case "newest":      return a.daysOld - b.daysOld;
+      case "az":          return a.name.localeCompare(b.name);
+      case "za":          return b.name.localeCompare(a.name);
+      default:            return 0;
     }
   });
 
@@ -313,11 +338,17 @@ function renderProducts() {
 
   grid.innerHTML = pageProducts.map((p) => buildProductCard(p)).join("");
 
+  // Restore qty controls for items already in cart
+  pageProducts.forEach((p) => {
+    const qty = CartManager.getItemQuantity(p.id);
+    if (qty > 0) refreshCardQtyControl(p.id);
+  });
+
   // Intersection Observer for lazy load animations
   const cards = grid.querySelectorAll(".product-card");
   const observer = new IntersectionObserver(
     (entries) => entries.forEach((e) => e.isIntersecting && e.target.classList.add("visible")),
-    { threshold: 0.1 }
+    { threshold: 0.05 }
   );
   cards.forEach((c) => observer.observe(c));
 
@@ -328,6 +359,18 @@ function buildProductCard(p) {
   const dp = getDiscountedPrice(p);
   const isWished = CartManager.isWishlisted(p.id);
   const outOfStock = p.stock === 0;
+  const qty = CartManager.getItemQuantity(p.id);
+
+  const footerHTML = outOfStock
+    ? `<button class="btn-add-cart disabled" disabled aria-label="Out of stock">Out of Stock</button>`
+    : qty > 0
+      ? `<div class="card-qty-control">
+           <button class="card-qty-btn" onclick="cardQtyChange(${p.id}, -1)" aria-label="Decrease quantity">−</button>
+           <span class="card-qty-val">${qty}</span>
+           <button class="card-qty-btn" onclick="cardQtyChange(${p.id}, 1)" aria-label="Increase quantity">+</button>
+         </div>`
+      : `<button class="btn-add-cart" onclick="cardAddToCart(${p.id})" aria-label="Add ${p.name} to cart">Add to Cart</button>`;
+
   return `
   <article class="product-card${outOfStock ? " out-of-stock" : ""}" data-id="${p.id}" role="article" aria-label="${p.name}">
     ${p.discount > 0 ? `<span class="badge badge-discount">-${p.discount}%</span>` : ""}
@@ -346,30 +389,20 @@ function buildProductCard(p) {
       <div class="card-rating" aria-label="Rating: ${p.rating} out of 5">
         <span class="stars">${getStarHTML(p.rating)}</span>
         <span class="rating-num">${p.rating}</span>
-        <span class="review-count">(${p.reviews.toLocaleString()})</span>
+        <span class="review-count">(${p.reviews.toLocaleString("en-IN")})</span>
       </div>
       <div class="card-price-row">
-        <span class="card-price">${APP_CONFIG.currency}${dp.toLocaleString()}</span>
-        ${p.discount > 0 ? `<span class="card-original">${APP_CONFIG.currency}${p.price.toLocaleString()}</span>` : ""}
+        <span class="card-price">${APP_CONFIG.currency}${dp.toLocaleString("en-IN")}</span>
+        ${p.discount > 0 ? `<span class="card-original">${APP_CONFIG.currency}${p.price.toLocaleString("en-IN")}</span>` : ""}
       </div>
     </div>
-    <div class="card-footer">
-      <button class="btn-add-cart${outOfStock ? " disabled" : ""}" 
-        onclick="${outOfStock ? "" : `addToCartFromCard(${p.id})`}" 
-        ${outOfStock ? "disabled" : ""} aria-label="Add ${p.name} to cart">
-        ${outOfStock ? "Out of Stock" : "Add to Cart"}
-      </button>
-    </div>
+    <div class="card-footer">${footerHTML}</div>
   </article>`;
 }
 
 function highlightSearch(text) {
   if (!searchQuery) return text;
   return text.replace(new RegExp(`(${searchQuery})`, "gi"), "<mark>$1</mark>");
-}
-
-function addToCartFromCard(id) {
-  CartManager.addItem(id);
 }
 
 function toggleWish(id, btn) {
@@ -400,9 +433,9 @@ function openQuickView(id) {
   document.getElementById("qv-category").textContent = p.category;
   document.getElementById("qv-name").textContent = p.name;
   document.getElementById("qv-brand").textContent = p.brand;
-  document.getElementById("qv-rating").innerHTML = `${getStarHTML(p.rating)} <span>${p.rating} (${p.reviews.toLocaleString()} reviews)</span>`;
-  document.getElementById("qv-price").textContent = `${APP_CONFIG.currency}${dp.toLocaleString()}`;
-  document.getElementById("qv-original").textContent = p.discount > 0 ? `${APP_CONFIG.currency}${p.price.toLocaleString()}` : "";
+  document.getElementById("qv-rating").innerHTML = `${getStarHTML(p.rating)} <span>${p.rating} (${p.reviews.toLocaleString("en-IN")} reviews)</span>`;
+  document.getElementById("qv-price").textContent = `${APP_CONFIG.currency}${dp.toLocaleString("en-IN")}`;
+  document.getElementById("qv-original").textContent = p.discount > 0 ? `${APP_CONFIG.currency}${p.price.toLocaleString("en-IN")}` : "";
   document.getElementById("qv-desc").textContent = p.description;
   document.getElementById("qv-stock").textContent = p.stock === 0 ? "Out of Stock" : p.stock < 5 ? `Only ${p.stock} left!` : "In Stock";
   document.getElementById("qv-add-cart").onclick = () => {
@@ -458,7 +491,7 @@ function renderActiveFilterTags() {
   const tags = [];
   activeFilters.categories.forEach((c) => tags.push({ label: c, remove: () => { activeFilters.categories = activeFilters.categories.filter((x) => x !== c); const cb = document.querySelector(`.filter-cb[data-category="${c}"]`); if (cb) cb.checked = false; } }));
   activeFilters.brands.forEach((b) => tags.push({ label: b, remove: () => { activeFilters.brands = activeFilters.brands.filter((x) => x !== b); const cb = document.querySelector(`.filter-cb[data-brand="${b}"]`); if (cb) cb.checked = false; } }));
-  if (activeFilters.rating > 0) tags.push({ label: `${activeFilters.rating}★ & up`, remove: () => { activeFilters.rating = 0; document.querySelector('input[name="rating"][value="0"]') && (document.querySelector('input[name="rating"][value="0"]').checked = true); } });
+  if (activeFilters.rating > 0) tags.push({ label: `${activeFilters.rating}★ & above`, remove: () => { activeFilters.rating = 0; const r0 = document.querySelector('input[name="rating"][value="0"]'); if (r0) r0.checked = true; } });
   if (activeFilters.inStockOnly) tags.push({ label: "In Stock Only", remove: () => { activeFilters.inStockOnly = false; const cb = document.getElementById("in-stock-toggle"); if (cb) cb.checked = false; } });
   if (searchQuery) tags.push({ label: `"${searchQuery}"`, remove: () => { searchQuery = ""; const inp = document.getElementById("search-input"); if (inp) inp.value = ""; } });
 
@@ -480,7 +513,9 @@ function removeTag(idx) {
 }
 
 function clearAllFilters() {
-  activeFilters = { categories: [], brands: [], priceMin: 0, priceMax: Infinity, rating: 0, inStockOnly: false };
+  const slider = document.getElementById("price-max-slider");
+  const maxPrice = slider ? parseInt(slider.max) : Infinity;
+  activeFilters = { categories: [], brands: [], priceMin: 0, priceMax: maxPrice, rating: 0, inStockOnly: false };
   searchQuery = "";
   const inp = document.getElementById("search-input");
   if (inp) inp.value = "";
@@ -488,8 +523,10 @@ function clearAllFilters() {
   document.querySelectorAll('input[name="rating"]').forEach((r) => (r.value === "0" ? (r.checked = true) : (r.checked = false)));
   const stockCb = document.getElementById("in-stock-toggle");
   if (stockCb) stockCb.checked = false;
-  const slider = document.getElementById("price-max-slider");
-  if (slider) { slider.value = slider.max; document.getElementById("price-label").textContent = `Up to ${APP_CONFIG.currency}${parseInt(slider.max).toLocaleString()}`; }
+  if (slider) {
+    slider.value = slider.max;
+    document.getElementById("price-label").textContent = `Up to ${APP_CONFIG.currency}${maxPrice.toLocaleString("en-IN")}`;
+  }
   currentPage = 1;
   applyFiltersAndSort();
   renderActiveFilterTags();

@@ -15,19 +15,27 @@
   <header class="navbar" role="banner">
     <div class="nav-inner">
       <a href="index.html" class="nav-logo" aria-label="ShopNode home"><span class="logo-icon">◈</span>ShopNode</a>
-      <nav class="nav-links" role="navigation">
+      <nav class="nav-links" role="navigation" aria-label="Main navigation">
         <a href="index.html" class="nav-link">Home</a>
         <a href="products.html" class="nav-link">Products</a>
+        <a href="products.html?category=Electronics" class="nav-link">Electronics</a>
+        <a href="products.html?category=Fashion" class="nav-link">Fashion</a>
+        <a href="products.html?category=HomeAppliances" class="nav-link">Home Appliances</a>
       </nav>
       <div class="nav-actions">
-        <a href="cart.html" class="nav-icon-btn cart-btn" aria-label="Shopping cart">🛒<span class="cart-badge">0</span></a>
+        <a href="cart.html" class="nav-icon-btn cart-btn active-cart-btn" aria-label="Shopping cart">🛒<span class="cart-badge">0</span></a>
         <button class="nav-hamburger" onclick="toggleMobileNav()" aria-label="Toggle menu">☰</button>
       </div>
     </div>
     <div class="mobile-nav" id="mobile-nav" aria-hidden="true">
       <a href="index.html">Home</a>
       <a href="products.html">All Products</a>
-      <a href="cart.html">Cart</a>
+      <a href="products.html?category=Electronics">Electronics</a>
+      <a href="products.html?category=Fashion">Fashion</a>
+      <a href="products.html?category=HomeAppliances">Home Appliances</a>
+      <a href="products.html?category=Books">Books</a>
+      <a href="products.html?category=Sports">Sports</a>
+      <a href="cart.html" class="active">Cart</a>
     </div>
   </header>
 
@@ -91,8 +99,28 @@
     </div>
   </main>
 
-  <footer class="footer-minimal">
-    <p>© 2026 ShopNode · <a href="index.html">Home</a> · <a href="products.html">Shop</a></p>
+  <footer class="footer" role="contentinfo">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="logo-icon">◈</span><strong>ShopNode</strong>
+        <p>Your one-stop modern shopping destination.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Shop</h4>
+        <a href="products.html">All Products</a>
+        <a href="products.html?category=Electronics">Electronics</a>
+        <a href="products.html?category=Fashion">Fashion</a>
+        <a href="products.html?category=HomeAppliances">Home Appliances</a>
+      </div>
+      <div class="footer-links">
+        <h4>Help</h4>
+        <a href="#">Returns</a>
+        <a href="#">Track Order</a>
+        <a href="#">FAQs</a>
+        <a href="#">Contact</a>
+      </div>
+    </div>
+    <p class="footer-copy">© 2026 ShopNode — All Rights Reserved.</p>
   </footer>
 
   <div id="toast-container" role="status" aria-live="polite"></div>
