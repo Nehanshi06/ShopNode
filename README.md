@@ -1,4 +1,4 @@
-# Nexus Store — E-Commerce Website UX Enhancement System
+# ShopNode — E-Commerce Website UX Enhancement System
 
 > **Academic / Internship Project** | Vanilla HTML · CSS · JavaScript
 
@@ -6,7 +6,7 @@
 
 ## 1. Project Introduction
 
-**Nexus Store** is a fully functional, front-end-only e-commerce web application built entirely with HTML5, CSS3, and Vanilla JavaScript (ES6+). It demonstrates advanced UX engineering techniques including real-time filtering, debounced search with autocomplete suggestions, multi-step checkout with live validation, a persistent LocalStorage cart, and a modern dark-theme design system — all without any framework, backend, or build tool. Simply open `index.html` in a browser.
+**ShopNode** is a fully functional, front-end-only e-commerce web application built entirely with HTML5, CSS3, and Vanilla JavaScript (ES6+). It demonstrates advanced UX engineering techniques including real-time filtering, debounced search with autocomplete suggestions, multi-step checkout with live validation, a persistent LocalStorage cart, and a modern dark-theme design system — all without any framework, backend, or build tool. Simply open `index.html` in a browser.
 
 ---
 
@@ -181,8 +181,8 @@ ecommerce-enhancement/
 │                         │                            │
 │  ┌──────────────────────▼───────────────────────┐    │
 │  │           LocalStorage (Persistence)          │    │
-│  │   nexus_cart: [{id, quantity}]               │    │
-│  │   nexus_wishlist: [id, id, …]                │    │
+│  │   shopnode_cart: [{id, quantity}]               │    │
+│  │   shopnode_wishlist: [id, id, …]                │    │
 │  └──────────────────────────────────────────────┘    │
 └─────────────────────────────────────────────────────┘
 ```
@@ -309,7 +309,7 @@ All filtering runs over the in-memory `PRODUCTS` array (O(n)). With 28–100 pro
 
 ## 13. Conclusion
 
-Nexus Store demonstrates that a fully-featured, professional-grade e-commerce frontend can be built without any framework or backend dependency. By leveraging ES6+ JavaScript, the CSS Grid/Flexbox layout system, LocalStorage, and thoughtful UX patterns, the project delivers:
+ShopNode demonstrates that a fully-featured, professional-grade e-commerce frontend can be built without any framework or backend dependency. By leveraging ES6+ JavaScript, the CSS Grid/Flexbox layout system, LocalStorage, and thoughtful UX patterns, the project delivers:
 
 - **Discoverability** through advanced filtering and smart search.
 - **Convenience** through a persistent cart and streamlined checkout.
